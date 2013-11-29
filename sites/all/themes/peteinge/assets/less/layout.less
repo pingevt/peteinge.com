@@ -5,15 +5,32 @@ body    #333333
 bg-color #9999cc, rgba(159, 168, 193, .5)
 */
 
-@red: #993333;
-@red_hover: #cc6666;
-@body_color: #333333;
-@bg-color: #9999cc;
+@red:         #993333;
+@red_hover:   #cc6666;
+@body_color:  #333333;
+@bg-color:    #9999cc;
 
+@import "../../bootstrap/less/bootstrap.less";
+
+
+@font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-serif:       Times, serif;
+@font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
+@font-family-base:        @font-family-serif;
 
 body {
   background: url(../images/bg.png) left top repeat;
-  color: #333333;
+  color: @body_color;
+}
+
+label {
+  display: block;
+}
+
+.form-type-checkbox {
+  input {
+    margin-top: 0px;
+  }
 }
 
 a {
@@ -143,13 +160,15 @@ header #navigation li a:hover {
 .page-contact .region.region-content,
 .page-portfolio .region.region-content,
 .page-node-1 .region.region-content,
+.page-blog .region.region-content,
+.node-type-blog .region.region-content,
 #home-lower-content {
   background: transparent url(../images/full-width-fade.png) left top no-repeat;
 }
 
 
 body.front .region.region-content {
-  left: -20px;
+  left: 0px;
 }
 
 
@@ -163,7 +182,7 @@ Home Page
 	top: 15px;
 	left: -20px;
 	z-index: 100;
-	width: 882px;
+	width: 900px;
 	background: white;
 
 	box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
@@ -194,7 +213,7 @@ Home Page
 }
 
 .pagination {
-    margin:6px 2px 0 0;
+    margin: 12px 2px 0 0;
     float: right;
     list-style: none;
 }
@@ -207,8 +226,8 @@ Home Page
 .pagination li a {
     display: block;
     width: 13px;
-    height: 0;
-    padding-top: 13px;
+    height: 13px;
+    padding-top: 0px;
     background-image: url(../images/pagination.png);
     background-position: 0 0;
     float: left;
@@ -225,7 +244,7 @@ Home Page
   width: 13px;
   height: 13px;
   float: left;
-  margin-top: 6px;
+  margin-top: 12px;
 }
 
 i.icon-left {
@@ -441,6 +460,55 @@ Services Page
 
 
 
+
+/*
+Blogs
+*/
+
+
+.page-blog {
+  .region.region-content {
+    padding-left: 160px;
+    padding-right: 160px;
+
+    .views-row {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #112562;
+
+      .submitted {
+        display: none;
+      }
+    }
+  }
+}
+
+
+.node-type-blog {
+  h1#page-title {
+    font-size: 45px;
+  }
+
+  .region.region-content {
+    top: -20px;
+
+    padding-left: 80px;
+    padding-right: 240px;
+
+    .submitted {
+      margin-bottom: 20px;
+      color: lighten(@body_color, 25%);
+    }
+
+    .field-name-field-tags {
+      position: absolute;
+      right: 0px;
+      top: 40px;
+      width: 200px;
+
+    }
+
+  }
+}
 
 
 

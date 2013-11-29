@@ -130,7 +130,7 @@ function peteinge_front_page_content() {
 
 ?>
   <div id="slides">
-<div class="slides_container">
+    <div class="slides_container">
 <?php
 // add the library and add the js
 drupal_add_js('sites/all/libraries/slides/source/slides.min.jquery.js');
@@ -177,11 +177,11 @@ $string = preg_replace("[^A-Za-z0-9]", "", $string);
   print '</div>';
 }
 ?>
-</div>
-<a href="#" class="prev"><i class="icon-left" ></i></a>
-<a href="#" class="next"><i class="icon-right" ></i></a>
+    </div>
+    <a href="#" class="prev"><i class="icon-left" ></i></a>
+    <a href="#" class="next"><i class="icon-right" ></i></a>
 
-</div>
+  </div>
 
 <div id="home-lower-content">
   <div id="col1">
