@@ -18,6 +18,8 @@ bg-color #9999cc, rgba(159, 168, 193, .5)
 @font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
 @font-family-base:        @font-family-serif;
 
+@icon-font-path:          "../../bootstrap/fonts/";
+
 body {
   background: url(../images/bg.png) left top repeat;
   color: @body_color;
@@ -150,9 +152,6 @@ header #navigation li a:hover {
   top: -40px;
 
   z-index: 8;
-}
-
-.region.region-content {
   padding: 40px 20px 20px 20px;
   min-height: 306px;
 }
@@ -177,104 +176,22 @@ body.front .region.region-content {
 Home Page
 */
 
-#slides {
-  position:relative;
-	top: 15px;
-	left: -20px;
-	z-index: 100;
+.front .region.region-content {
+  padding: 40px 0px 20px 0px;
+}
+
+#project-carousel {
 	width: 900px;
-	background: white;
+  height:376px;
 
 	box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
   -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
   -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
-  padding: 8px;
-  border: 1px solid rgba(124, 124, 124, .6);
-
-  height:376px;
-}
-
-.slides_container {
-	width: 882px;
-	overflow: hidden;
-	position: relative;
-	display: none;
-}
-
-.slides_container .slide {
-	width: 882px;
-	height: 358px;
-	display: block;
-}
-
-.slides_container img {
-	display: block;
-	width: 882px;
-}
-
-.pagination {
-    margin: 12px 2px 0 0;
-    float: right;
-    list-style: none;
-}
-
-.pagination li {
-    float: left;
-    margin: 0 1px;
-}
-
-.pagination li a {
-    display: block;
-    width: 13px;
-    height: 13px;
-    padding-top: 0px;
-    background-image: url(../images/pagination.png);
-    background-position: 0 0;
-    float: left;
-    overflow: hidden;
-}
-
-.pagination li.current a, .pagination li.current a:hover { background-position: 0 -13px }
-
-.pagination li a:hover { background-position: 0 -26px }
-
-
-.prev, .next {
-  display: block;
-  width: 13px;
-  height: 13px;
-  float: left;
-  margin-top: 12px;
-}
-
-i.icon-left {
-  display: block;
-  width: 13px;
-  height: 13px;
-  background: transparent url(../images/arrows.png) left -13px no-repeat;
-}
-
-
-i.icon-right {
-  display: block;
-  width: 13px;
-  height: 13px;
-  background: transparent url(../images/arrows.png) left top no-repeat;
-}
-
-i.icon-left:hover {
-  background-position: left -39px;
-}
-
-
-i.icon-right:hover {
-  background-position: left -26px;
 }
 
 #home-lower-content {
   min-height: 368px;
   margin-top: 60px;
-
   padding-top: 20px;
 }
 

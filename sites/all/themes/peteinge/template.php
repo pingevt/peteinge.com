@@ -127,61 +127,63 @@ function peteinge_css_alter(&$css) {
 
 
 function peteinge_front_page_content() {
+  drupal_add_js( drupal_get_path('theme' , 'peteinge') . '/bootstrap/js/carousel.js');
+  drupal_add_js( drupal_get_path('theme' , 'peteinge') . '/bootstrap/js/transition.js');
+
+  $indicator_str = '';
+  $slide_str = '';
+  $view = views_get_view_result('portfolio', 'block_1');
+
+  foreach ($view as $i => $result) {
+
+    $indicator_str .= '<li data-target="#project-carousel" data-slide-to="' . $i . '" class="';
+    if ($i == 0) $indicator_str .= 'active';
+    $indicator_str .= '"></li>';
+
+    $string = $result->node_title;
+    $string = strtolower($string);
+    $string = str_replace(' ', '_', $string);
+    $string = preg_replace("[^A-Za-z0-9]", "", $string);
+
+    $image = $result->field_field_front_page_image[0];
+    $img_url = file_create_url($image['raw']['uri']);
+
+    //print '<a href="portfolio#'.$string.'" ><img src="'. $img_url .'" alt="" title="" /></a>';
+
+    //print '</div>';
+
+    $slide_str .= '<div class="item ';
+    if ($i == 0) $slide_str .= 'active';
+    $slide_str .= '">
+      <img src="' . $img_url . '" alt="' . $result->node_title . '">
+      <div class="carousel-caption">
+      </div>
+    </div>';
+  }
+
 
 ?>
-  <div id="slides">
-    <div class="slides_container">
-<?php
-// add the library and add the js
-drupal_add_js('sites/all/libraries/slides/source/slides.min.jquery.js');
-drupal_add_js("(function($) {
-                      $(function(){
-			// Set starting slide to 1
-			var startSlide = 1;
-			// Get slide number if it exists
-			if (window.location.hash) {
-				startSlide = window.location.hash.replace('#','');
-			}
-			// Initialize Slides
-			$('#slides').slides({
-				preload: true,
-				preloadImage: 'sites/all/libraries/slides/examples/Standard/img/loading.gif',
-				generatePagination: true,
-				play: 5000,
-				pause: 2500,
-				hoverPause: true,
-				// Get the starting slide
-				start: startSlide,
-				animationComplete: function(current){
-					// Set the slide number as a hash
-					window.location.hash = '#' + current;
-				}
-			});
-		});})(jQuery);", 'inline');
 
-$view = views_get_view_result('portfolio', 'block_1');
-//print_r($view);
-foreach($view as $i=> $result) {
+<div id="project-carousel" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <?php print $indicator_str; ?>
+  </ol>
 
-  print '<div class="slide">';
-$string = $result->node_title;
-$string = strtolower($string);
-$string = str_replace(' ', '_', $string);
-$string = preg_replace("[^A-Za-z0-9]", "", $string);
-
-  $image = $result->field_field_front_page_image[0];
-  $img_url = file_create_url($image['raw']['uri']);
-
-  print '<a href="portfolio#'.$string.'" ><img src="'. $img_url .'" alt="" title="" /></a>';
-
-  print '</div>';
-}
-?>
-    </div>
-    <a href="#" class="prev"><i class="icon-left" ></i></a>
-    <a href="#" class="next"><i class="icon-right" ></i></a>
-
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner">
+    <?php print $slide_str; ?>
   </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#project-carousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#project-carousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+
 
 <div id="home-lower-content">
   <div id="col1">
