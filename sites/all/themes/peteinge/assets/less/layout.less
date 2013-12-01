@@ -10,6 +10,8 @@ bg-color #9999cc, rgba(159, 168, 193, .5)
 @body_color:  #333333;
 @bg-color:    #9999cc;
 
+@lt_blue: #6f7ca0;
+
 @import "../../bootstrap/less/bootstrap.less";
 
 
@@ -192,36 +194,47 @@ Home Page
 #home-lower-content {
   min-height: 368px;
   margin-top: 60px;
-  padding-top: 20px;
+
+  #col1 {
+    width: 30%;
+    float: left;
+    margin-left: 2%;
+
+    min-height: 30px;
+
+    img {
+      float: left;
+      box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+      -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+      -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+
+      margin: 0 10px 10px 0;
+    }
+  }
+
+  #col2 {
+    width: 30%;
+    float: left;
+    margin-left: 3%;
+
+    min-height: 30px;
+  }
+
+  #col3 {
+    width: 30%;
+    float: right;
+    margin-right: 2%;
+
+    min-height: 30px;
+  }
+
+  h2 {
+    color: @red;
+    font-size: 20px;
+
+    border-bottom: 3px solid @lt_blue;
+  }
 }
-
-#home-lower-content #col1 {
-  width: 30%;
-  float: left;
-  margin-left: 2%;
-
-  min-height: 30px;
-  background: pink;
-}
-
-#home-lower-content #col2 {
-  width: 30%;
-  float: left;
-  margin-left: 3%;
-
-  min-height: 30px;
-  background: green;
-}
-
-#home-lower-content #col3 {
-  width: 30%;
-  float: right;
-  margin-right: 2%;
-
-  min-height: 30px;
-  background: blue;
-}
-
 
 
 

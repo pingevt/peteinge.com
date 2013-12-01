@@ -6188,28 +6188,36 @@ Home Page
 #home-lower-content {
   min-height: 368px;
   margin-top: 60px;
-  padding-top: 20px;
 }
 #home-lower-content #col1 {
   width: 30%;
   float: left;
   margin-left: 2%;
   min-height: 30px;
-  background: pink;
+}
+#home-lower-content #col1 img {
+  float: left;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  margin: 0 10px 10px 0;
 }
 #home-lower-content #col2 {
   width: 30%;
   float: left;
   margin-left: 3%;
   min-height: 30px;
-  background: green;
 }
 #home-lower-content #col3 {
   width: 30%;
   float: right;
   margin-right: 2%;
   min-height: 30px;
-  background: blue;
+}
+#home-lower-content h2 {
+  color: #993333;
+  font-size: 20px;
+  border-bottom: 3px solid #6f7ca0;
 }
 /*
 Portfolio Page

@@ -188,10 +188,62 @@ function peteinge_front_page_content() {
 <div id="home-lower-content">
   <div id="col1">
     <h2>About Me</h2>
+    <img src="/<?php print drupal_get_path('theme' , 'peteinge') . '/assets/images/peteinge.png';?>" alt="Pete Inge" title="Pete Inge" />
+    <p>My name is Pete Inge. I was born and raised in Nazareth, PA and currently reside
+    right outside of Philadelphia. I studied Math and Visual Communication Design at
+    Virginia Tech. In May 2005 I received a BS in Math and received a BFA in Art in May
+    2008.</p>
+
+    <p>I enjoy working in digital art and multimedia and exploring new avenues to express
+    my creativity digitally. The past few years have seen my experiences, travel and
+    family combine to help develop my work. I fully believe in experiences, opportunities
+    and traveling to help develop me as a person and as a designer. I plan on doing much
+    more in the future.</p>
+
+    <p>I am currently working with Autodesk Maya 2008, Mel and Unity3D gaming engine. I
+    am excited about the possibilities of combining my math degree with my artistic, creative
+    side. Along with Maya, I am proficient with Actionscript 3, Adobe CS, HTML, CSS,
+    PHP, mySQL, drupal, and JavaScript and the list goes on.</p>
+
+		<p>I am a designer/programmer with expertise in multiple forms of media. My mission is
+		to provide a creative and powerful solution for the needs of my clients by combining
+		my expertise in multiple forms of media. Solutions that not only function but are
+		also visually pleasing.</p>
   </div>
 
   <div id="col2">
     <h2>Latest News</h2>
+<?php
+    $entity_type = 'node';
+    $efq = new EntityFieldQuery();
+    $efq->entityCondition('entity_type', $entity_type);
+    $efq->propertyCondition('type', 'blog');
+    $efq->propertyCondition('status', '1');
+    $efq->propertyCondition('promote', '1');
+    $efq->propertyOrderBy('created', 'DESC');
+    $efq->range(0, 5);
+
+    $results = $efq->execute();
+
+    print '<pre>';
+    print_r($results);
+    print '</pre>';
+
+    foreach ($results['node'] AS $nid => $result) {
+      $node = node_load($nid);
+
+      print '<pre>';
+      print_r($node);
+      print '</pre>';
+
+      print '<div class="blog-teaser-wrapper">';
+      print format_date($node->created, 'small');
+      print '<h3>' . $node->title . '</h3>';
+
+      print '</div>';
+    }
+
+?>
   </div>
 
   <div id="col3">
