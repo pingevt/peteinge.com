@@ -8,14 +8,15 @@ bg-color #9999cc, rgba(159, 168, 193, .5)
 @red:         #993333;
 @red_hover:   #cc6666;
 @body_color:  #333333;
-@bg-color:    #9999cc;
+@bg_color:    #9999cc;
 
 @lt_blue: #6f7ca0;
+@dk_blue: #112562;
 
 @import "../../bootstrap/less/bootstrap.less";
 
 
-@font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-sans-serif:  Arial, sans-serif;
 @font-family-serif:       Times, serif;
 @font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
 @font-family-base:        @font-family-serif;
@@ -196,9 +197,9 @@ Home Page
   margin-top: 60px;
 
   #col1 {
-    width: 30%;
+    width: 28%;
     float: left;
-    margin-left: 2%;
+    margin-left: 4%;
 
     min-height: 30px;
 
@@ -213,26 +214,88 @@ Home Page
   }
 
   #col2 {
-    width: 30%;
+    width: 28%;
     float: left;
-    margin-left: 3%;
+    margin-left: 4%;
 
     min-height: 30px;
+
+    .blog-teaser-wrapper {
+      border-bottom: 1px solid @lt_blue;
+      padding-bottom: 30px;
+      margin-top: 40px;
+
+      &:first-of-type {
+        margin-top: 0px;
+      }
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      .teaser-date {
+        color: lighten(@body_color, 20%);
+      }
+
+      h3 {
+        margin-top: 0;
+        font-family: @font-family-sans-serif;
+        font-weight: bold;
+
+        a {
+          color: darken(@dk_blue, 0%);
+        }
+      }
+    }
   }
 
   #col3 {
-    width: 30%;
+    width: 28%;
     float: right;
-    margin-right: 2%;
+    margin-right: 4%;
 
     min-height: 30px;
+
+    .project-teaser-wrapper {
+
+      border-bottom: 1px solid @lt_blue;
+      padding-bottom: 30px;
+      margin-top: 40px;
+
+      &:first-of-type {
+        margin-top: 0px;
+      }
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      img {
+        box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+        -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+        -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+        border: 1px solid @lt_blue;
+      }
+
+      h3 {
+        margin-top: 10px;
+        font-family: @font-family-sans-serif;
+        font-weight: bold;
+
+        a {
+          color: darken(@dk_blue, 0%);
+        }
+      }
+    }
   }
 
   h2 {
     color: @red;
-    font-size: 20px;
+    font-size: 24px;
 
     border-bottom: 3px solid @lt_blue;
+
+    font-weight: bold;
   }
 }
 
@@ -245,11 +308,7 @@ Home Page
 Portfolio Page
 */
 .view-portfolio .views-row {
-  float: left;
-  position: relative;
   width: 100%;
-  top: 0;
-  left: 0;
 
   clear: both;
   margin-bottom: 30px;
@@ -258,10 +317,7 @@ Portfolio Page
 }
 
 .view-portfolio .view-content {
-  position: relative;
-  float: left;
-  top: 0;
-  left: 0;
+
 }
 
 .view-portfolio .field-content {
@@ -271,11 +327,13 @@ Portfolio Page
 .project-description-wrapper {
   float: left;
   width: 33%;
+  margin-left: 15px;
 }
 
 .project-thumbs-wrapper {
   float: right;
   width: 65%;
+  padding-top: 10px
 }
 
 .project-thumbs-wrapper ul {

@@ -6190,9 +6190,9 @@ Home Page
   margin-top: 60px;
 }
 #home-lower-content #col1 {
-  width: 30%;
+  width: 28%;
   float: left;
-  margin-left: 2%;
+  margin-left: 4%;
   min-height: 30px;
 }
 #home-lower-content #col1 img {
@@ -6203,48 +6203,88 @@ Home Page
   margin: 0 10px 10px 0;
 }
 #home-lower-content #col2 {
-  width: 30%;
+  width: 28%;
   float: left;
-  margin-left: 3%;
+  margin-left: 4%;
   min-height: 30px;
 }
+#home-lower-content #col2 .blog-teaser-wrapper {
+  border-bottom: 1px solid #6f7ca0;
+  padding-bottom: 30px;
+  margin-top: 40px;
+}
+#home-lower-content #col2 .blog-teaser-wrapper:first-of-type {
+  margin-top: 0px;
+}
+#home-lower-content #col2 .blog-teaser-wrapper:last-of-type {
+  border-bottom: none;
+}
+#home-lower-content #col2 .blog-teaser-wrapper .teaser-date {
+  color: #666666;
+}
+#home-lower-content #col2 .blog-teaser-wrapper h3 {
+  margin-top: 0;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+#home-lower-content #col2 .blog-teaser-wrapper h3 a {
+  color: #112562;
+}
 #home-lower-content #col3 {
-  width: 30%;
+  width: 28%;
   float: right;
-  margin-right: 2%;
+  margin-right: 4%;
   min-height: 30px;
+}
+#home-lower-content #col3 .project-teaser-wrapper {
+  border-bottom: 1px solid #6f7ca0;
+  padding-bottom: 30px;
+  margin-top: 40px;
+}
+#home-lower-content #col3 .project-teaser-wrapper:first-of-type {
+  margin-top: 0px;
+}
+#home-lower-content #col3 .project-teaser-wrapper:last-of-type {
+  border-bottom: none;
+}
+#home-lower-content #col3 .project-teaser-wrapper img {
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  border: 1px solid #6f7ca0;
+}
+#home-lower-content #col3 .project-teaser-wrapper h3 {
+  margin-top: 10px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+#home-lower-content #col3 .project-teaser-wrapper h3 a {
+  color: #112562;
 }
 #home-lower-content h2 {
   color: #993333;
-  font-size: 20px;
+  font-size: 24px;
   border-bottom: 3px solid #6f7ca0;
+  font-weight: bold;
 }
 /*
 Portfolio Page
 */
 .view-portfolio .views-row {
-  float: left;
-  position: relative;
   width: 100%;
-  top: 0;
-  left: 0;
   clear: both;
   margin-bottom: 30px;
   border-bottom: 1px solid #112562;
 }
-.view-portfolio .view-content {
-  position: relative;
-  float: left;
-  top: 0;
-  left: 0;
-}
 .project-description-wrapper {
   float: left;
   width: 33%;
+  margin-left: 15px;
 }
 .project-thumbs-wrapper {
   float: right;
   width: 65%;
+  padding-top: 10px;
 }
 .project-thumbs-wrapper ul {
   list-style-type: none;

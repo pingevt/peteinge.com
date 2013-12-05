@@ -156,11 +156,26 @@ function peteinge_front_page_content() {
     if ($i == 0) $slide_str .= 'active';
     $slide_str .= '">
       <img src="' . $img_url . '" alt="' . $result->node_title . '">
-      <div class="carousel-caption">
+      <div class="carousel-caption">';
+     $slide_str .= $result->node_title;
+
+    $slide_str .= '
       </div>
     </div>';
   }
 
+$portfoliio_view = views_get_view('portfolio');
+$portfoliio_view->init();
+$portfoliio_view->set_display('page');
+
+$portfoliio_view->init_pager();
+$portfolio_items_per_page = $portfoliio_view->get_items_per_page();
+
+$portfoliio_view->set_items_per_page(0);
+$portfoliio_view->pre_execute();
+$portfoliio_view->execute();
+
+$portfolio = $portfoliio_view->result;
 
 ?>
 
@@ -225,20 +240,14 @@ function peteinge_front_page_content() {
 
     $results = $efq->execute();
 
-    print '<pre>';
-    print_r($results);
-    print '</pre>';
-
     foreach ($results['node'] AS $nid => $result) {
       $node = node_load($nid);
 
-      print '<pre>';
-      print_r($node);
-      print '</pre>';
-
       print '<div class="blog-teaser-wrapper">';
-      print format_date($node->created, 'small');
-      print '<h3>' . $node->title . '</h3>';
+      print '<span class="teaser-date">' . format_date($node->created, 'small') . '</span>';
+      print '<h3>' . l($node->title, 'node/' . $node->nid) . '</h3>';
+
+      print render(field_view_field('node', $node, 'body', array('label' => 'hidden', 'type' => 'text_trimmed', 'settings' => array('trim_length' => '200'))));
 
       print '</div>';
     }
@@ -248,6 +257,44 @@ function peteinge_front_page_content() {
 
   <div id="col3">
     <h2>Recent Projects</h2>
+<?php
+    $entity_type = 'node';
+    $efq = new EntityFieldQuery();
+    $efq->entityCondition('entity_type', $entity_type);
+    $efq->propertyCondition('type', 'projects');
+    $efq->propertyCondition('status', '1');
+    $efq->propertyCondition('promote', '1');
+    $efq->fieldOrderBy('field_project_date', 'value', 'DESC');
+    $efq->range(0, 5);
+
+    $results = $efq->execute();
+
+    foreach ($results['node'] AS $nid => $result) {
+      $node = node_load($nid);
+
+      print '<div class="project-teaser-wrapper">';
+
+      print render(field_view_field('node', $node, 'field_thumbnail_banner', array('label' => 'hidden', 'type' => 'image', 'settings' => array('image_style' => 'fron_project_banner'))));
+
+      $string = $node->title;
+      $string = strtolower($string);
+      $string = str_replace(' ', '_', $string);
+      $string = preg_replace("[^A-Za-z0-9]", "", $string);
+
+      $page_num = 0;
+      foreach ($portfolio AS $i => $p) {
+        if ($p->nid == $node->nid) {
+          $page_num = floor(($i / $portfolio_items_per_page));
+          break;
+        }
+      }
+      print '<h3>' . l($node->title, 'portfolio', array('query' => array('page' => $page_num), 'fragment' => $string)) . '</h3>';
+
+      print render(field_view_field('node', $node, 'body', array('label' => 'hidden', 'type' => 'text_trimmed', 'settings' => array('trim_length' => '200'))));
+
+      print '</div>';
+    }
+?>
   </div>
 </div>
 
