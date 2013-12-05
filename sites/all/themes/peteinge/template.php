@@ -274,7 +274,7 @@ $portfolio = $portfoliio_view->result;
 
       print '<div class="project-teaser-wrapper">';
 
-      print render(field_view_field('node', $node, 'field_thumbnail_banner', array('label' => 'hidden', 'type' => 'image', 'settings' => array('image_style' => 'fron_project_banner'))));
+      print render(field_view_field('node', $node, 'field_thumbnail_banner', array('label' => 'hidden', 'type' => 'image', 'settings' => array('image_style' => 'front_project_banner'))));
 
       $string = $node->title;
       $string = strtolower($string);
