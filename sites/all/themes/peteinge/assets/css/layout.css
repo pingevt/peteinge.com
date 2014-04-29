@@ -6238,11 +6238,13 @@ Home Page
 }
 #home-lower-content #col3 .project-teaser-wrapper {
   border-bottom: 1px solid #6f7ca0;
-  padding-bottom: 30px;
+  /*padding-bottom: 30px;*/
+
   margin-top: 40px;
 }
 #home-lower-content #col3 .project-teaser-wrapper:first-of-type {
-  margin-top: 0px;
+  /*margin-top: 0px;*/
+
 }
 #home-lower-content #col3 .project-teaser-wrapper:last-of-type {
   border-bottom: none;
@@ -6278,12 +6280,12 @@ Portfolio Page
 }
 .project-description-wrapper {
   float: left;
-  width: 33%;
+  width: 45%;
   margin-left: 15px;
 }
 .project-thumbs-wrapper {
   float: right;
-  width: 65%;
+  width: 50%;
   padding-top: 10px;
 }
 .project-thumbs-wrapper ul {
@@ -6302,7 +6304,7 @@ Portfolio Page
   border: 1px solid rgba(0, 0, 0, 0.4);
 }
 .view-portfolio .portfolio-title {
-  font-size: 1.5em;
+  font-size: 1.6em;
   color: #333333;
 }
 .view-portfolio .project-date {
@@ -6321,7 +6323,10 @@ Portfolio Page
 .view-portfolio .project-body {
   margin-top: 9px;
   color: #333333;
-  font-size: 1em;
+  font-size: 1.2em;
+}
+.view-portfolio .project-body p {
+  line-height: 1.3em;
 }
 /*
 Services Page

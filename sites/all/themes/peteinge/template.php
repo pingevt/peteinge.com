@@ -28,6 +28,16 @@ function peteinge_preprocess_html(&$vars) {
  * Override or insert variables into the page template.
  */
 function peteinge_preprocess_page(&$vars) {
+/*
+global $base_path, $base_url;
+print $base_path;
+print '<br />';
+print $base_url;
+print '<pre>';
+print_r($_GET);
+print '</pre>';
+*/
+
   $vars['primary_local_tasks'] = $vars['tabs'];
   unset($vars['primary_local_tasks']['#secondary']);
   $vars['secondary_local_tasks'] = array(
@@ -155,12 +165,13 @@ function peteinge_front_page_content() {
     $slide_str .= '<div class="item ';
     if ($i == 0) $slide_str .= 'active';
     $slide_str .= '">
-      <img src="' . $img_url . '" alt="' . $result->node_title . '">
-      <div class="carousel-caption">';
-     $slide_str .= $result->node_title;
+      <img src="' . $img_url . '" alt="' . $result->node_title . '">';
+
+    //$slide_str .= '<div class="carousel-caption">';
+    //$slide_str .= $result->node_title;
+    //$slide_str .= '</div>';
 
     $slide_str .= '
-      </div>
     </div>';
   }
 
@@ -204,26 +215,29 @@ $portfolio = $portfoliio_view->result;
   <div id="col1">
     <h2>About Me</h2>
     <img src="/<?php print drupal_get_path('theme' , 'peteinge') . '/assets/images/peteinge.png';?>" alt="Pete Inge" title="Pete Inge" />
-    <p>My name is Pete Inge. I was born and raised in Nazareth, PA and currently reside
+    <p>I'm Pete Inge. I was born and raised in Nazareth, PA and currently reside
     right outside of Philadelphia. I studied Math and Visual Communication Design at
-    Virginia Tech. In May 2005 I received a BS in Math and received a BFA in Art in May
-    2008.</p>
+    Virginia Tech and received a BS in Math and a BFA in Art.</p>
 
     <p>I enjoy working in digital art and multimedia and exploring new avenues to express
-    my creativity digitally. The past few years have seen my experiences, travel and
-    family combine to help develop my work. I fully believe in experiences, opportunities
-    and traveling to help develop me as a person and as a designer. I plan on doing much
-    more in the future.</p>
+    my creativity digitally. The past few years I have seen my experiences, travel and
+    family combine to help develop my work. I fully believe in these things to help
+    develop me as a person, as a designer and as a developer.</p>
 
-    <p>I am currently working with Autodesk Maya 2008, Mel and Unity3D gaming engine. I
+    <!--<p>I am currently working with Autodesk Maya 2008, Mel and Unity3D gaming engine. I
     am excited about the possibilities of combining my math degree with my artistic, creative
     side. Along with Maya, I am proficient with Actionscript 3, Adobe CS, HTML, CSS,
-    PHP, mySQL, drupal, and JavaScript and the list goes on.</p>
+    PHP, mySQL, drupal, and JavaScript and the list goes on.</p>-->
 
-		<p>I am a designer/programmer with expertise in multiple forms of media. My mission is
+		<!--<p>I am a designer/programmer with expertise in multiple forms of media. My mission is
 		to provide a creative and powerful solution for the needs of my clients by combining
 		my expertise in multiple forms of media. Solutions that not only function but are
+		also visually pleasing.</p>-->
+
+		<p>My expertise in multiple forms of media provide a creative and powerful solution
+		for the needs of my clients. Solutions that not only function but are
 		also visually pleasing.</p>
+
   </div>
 
   <div id="col2">
@@ -290,7 +304,7 @@ $portfolio = $portfoliio_view->result;
       }
       print '<h3>' . l($node->title, 'portfolio', array('query' => array('page' => $page_num), 'fragment' => $string)) . '</h3>';
 
-      print render(field_view_field('node', $node, 'body', array('label' => 'hidden', 'type' => 'text_trimmed', 'settings' => array('trim_length' => '200'))));
+      //print render(field_view_field('node', $node, 'body', array('label' => 'hidden', 'type' => 'text_trimmed', 'settings' => array('trim_length' => '200'))));
 
       print '</div>';
     }
