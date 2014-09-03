@@ -1,8 +1,0 @@
-filename = "peteinge.com-2013-11-29T13-25-38"
-description = ""
-datestamp = "1385749539"
-generator = "Backup and Migrate (http://drupal.org/project/backup_migrate)"
-generatorversion = "7.x-2.x"
-sites[0][version] = "7.24"
-sites[0][name] = "peteinge.com"
-sites[0][url] = "http://peteinge.pete/"

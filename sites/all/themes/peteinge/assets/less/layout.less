@@ -259,11 +259,11 @@ Home Page
     .project-teaser-wrapper {
 
       border-bottom: 1px solid @lt_blue;
-      padding-bottom: 30px;
+      /*padding-bottom: 30px;*/
       margin-top: 40px;
 
       &:first-of-type {
-        margin-top: 0px;
+        /*margin-top: 0px;*/
       }
 
       &:last-of-type {
@@ -326,37 +326,37 @@ Portfolio Page
 
 .project-description-wrapper {
   float: left;
-  width: 33%;
+  width: 45%;
   margin-left: 15px;
 }
 
 .project-thumbs-wrapper {
   float: right;
-  width: 65%;
-  padding-top: 10px
-}
+  width: 50%;
+  padding-top: 10px;
 
-.project-thumbs-wrapper ul {
-  list-style-type: none;
-}
+  ul {
+    list-style-type: none;
 
-.project-thumbs-wrapper ul li {
-  float: left;
-  margin: 0 0 24px 24px;
-  width: 112px;
-  height: 112px;
-}
+    li {
+      float: left;
+      margin: 0 0 24px 24px;
+      width: 112px;
+      height: 112px;
 
-.project-thumbs-wrapper ul li img {
-  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
-  -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
-  -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+      img {
+        box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+        -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
+        -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, .3);
 
-  border: 1px solid rgba(0, 0, 0, .4);
+        border: 1px solid rgba(0, 0, 0, .4);
+      }
+    }
+  }
 }
 
 .view-portfolio .portfolio-title {
-  font-size: 1.5em;
+  font-size: 1.6em;
   color: #333333;
 }
 
@@ -379,7 +379,11 @@ Portfolio Page
 .view-portfolio .project-body {
   margin-top: 9px;
   color: #333333;
-  font-size: 1em;
+  font-size: 1.2em;
+
+  p {
+    line-height: 1.3em;
+  }
 }
 
 
