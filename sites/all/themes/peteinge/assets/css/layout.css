@@ -6139,11 +6139,10 @@ Home Page
 }
 #home-lower-content #col1 img {
   float: left;
-  margin: 0 10px 10px 0;
   box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
-  border: 1px solid #6f7ca0;
+  margin: 0 10px 10px 0;
 }
 #home-lower-content #col2 {
   width: 28%;
@@ -6161,6 +6160,10 @@ Home Page
   width: 100%;
   max-width: 100%;
   height: auto;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.3);
+  border: 1px solid #6f7ca0;
 }
 #home-lower-content #col2 .blog-teaser-wrapper:first-of-type {
   margin-top: 0px;
