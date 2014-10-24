@@ -249,6 +249,7 @@ $portfolio = $portfoliio_view->result;
     $efq->propertyCondition('type', 'blog');
     $efq->propertyCondition('status', '1');
     $efq->propertyCondition('promote', '1');
+    $efq->propertyCondition('created', time(), '<=');
     $efq->propertyOrderBy('created', 'DESC');
     $efq->range(0, 5);
 
@@ -278,6 +279,7 @@ $portfolio = $portfoliio_view->result;
     $efq->propertyCondition('type', 'projects');
     $efq->propertyCondition('status', '1');
     $efq->propertyCondition('promote', '1');
+    $efq->propertyCondition('created', time(), '<=');
     $efq->fieldOrderBy('field_project_date', 'value', 'DESC');
     $efq->range(0, 5);
 
