@@ -1,0 +1,140 @@
+<?php
+
+define('UNITY_SECRET_KEY', 'monkiesareawesome');
+
+/**
+ * Implementation of hook_menu().
+ */
+function unity_menu() {
+  $items['unity/addscore'] = array(
+    'page callback' => 'highscores_add',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['unity/displayscores/%'] = array(
+    'page callback' => 'highscores_display',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['unity/sendscores'] = array(
+    'page callback' => 'highscores_send_scores',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+
+
+/**
+ * Adds a score for the current user to the high scores table
+ */
+function highscores_add() {
+  $uname = $_GET['uname'];
+  $game_id = $_GET['game_id'];
+  $score = $_GET['score'];
+  $hash = $_GET['hash'];
+
+  //Must match the value in our game script
+  $real_hash = md5($uname.$score.UNITY_SECRET_KEY);
+
+  // Compare the server hash with the hash sent from the game.
+  // If they don't match the request is not coming from our game
+  if ($real_hash == $hash) {
+
+    db_insert('unity_highscores')
+      ->fields(array(
+        'game_id' => $game_id,
+        'username' => $uname,
+        'score' => $score,
+      ))
+      ->execute();
+
+
+    watchdog('unity', 'Added score.', array('@get' => print_r($_GET, TRUE)));
+  }
+  else {
+    watchdog('unity', 'Invlaid add request. Bad hash.', array('@get' => print_r($_GET, TRUE)), WATCHDOG_ERROR);
+  }
+}
+
+
+
+/**
+ * Outputs our high scores as a html table
+ */
+function highscores_display($game_id) {
+
+  $hash = $_GET['hash'];
+
+  //Must match the value in our game script
+  $real_hash = md5(UNITY_SECRET_KEY);
+
+  // Compare the server hash with the hash sent from the game.
+  // If they don't match the request is not coming from our game
+  if ($real_hash == $hash) {
+
+  }
+
+  $result = db_query("SELECT * FROM {unity_highscores} WHERE game_id = '" . $game_id . "' ORDER BY score DESC LIMIT 10");
+
+  $length = 20;
+  $flip = array('0' => '.', '1' => ' ');
+  $scores = "";
+  while ($record = $result->fetchObject()){
+
+    $str = $record->username;
+    for($i=strlen($str); $i < $length; $i++) {
+      $r = $i%2;
+
+      $str .= $flip[$r];
+    }
+
+    $str .= _pad($record->score, 6, ' ', 'before');
+
+    $scores .= $str . "\n";
+  }
+
+  print $scores;
+}
+
+
+function _pad($string, $length = 10, $pad = '0', $placement = "after" ) {
+  switch ($placement) {
+  case 'after':
+
+    for($i=strlen($string); $i < $length; $i++) {
+      $string = $string . $pad;
+    }
+
+    break;
+  case 'before':
+
+    for($i=strlen($string); $i < $length; $i++) {
+      $string = $pad . $string;
+    }
+
+    break;
+  }
+
+  return $string;
+}
+
+/**
+ * Sends the user information to our game in the format uid;user information
+ * @todo change the name of the function to reflect that
+ */
+
+function highscores_send_scores() {
+  global $user;
+  if ($user->uid) {
+    print $user->uid.';Logged in as: '.$user->name;
+  }
+  else {
+    print "0;You're playing as a guest. To save your highscore log in or create an account.";
+  }
+}
