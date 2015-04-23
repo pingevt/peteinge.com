@@ -8,34 +8,36 @@
  * Theme pager fields
  */
 function _views_slideshow_jcarousel_preprocess_pager(&$vars) {
-  // Build our javascript settings.
-  $js_vars = array(
-    'viewsSlideshowJCarouselPager' => array(
-      $vars['vss_id'] => array(
-        $vars['location'] => array(
-          'carouselObj' => '',
-          'moveOnChange' => $vars['settings']['views_slideshow_jcarousel_pager_move_on_change'],
-          'orientation' => $vars['settings']['views_slideshow_jcarousel_pager_orientation'],
-          'scroll' => $vars['settings']['views_slideshow_jcarousel_pager_scroll'],
-          'visible' => $vars['settings']['views_slideshow_jcarousel_pager_visible'],
-          'wrap' => $vars['settings']['views_slideshow_jcarousel_pager_wrap'],
-          'animation' => $vars['settings']['views_slideshow_jcarousel_pager_animation'],
-        ),
-      ),
-    ),
-  );
-
-  // Add the settings to the page.
-  drupal_add_js($js_vars, array('type' => 'setting', 'scope' => JS_DEFAULT));
-
-  // Add our class to the wrapper.
-  $vars['attributes_array']['class'] = (isset($vars['attributes_array']['class'])) ? $vars['attributes_array']['class'] . ' views_slideshow_jcarousel_pager jcarousel-skin-' . $vars['settings']['views_slideshow_jcarousel_pager_skin'] : 'views_slideshow_jcarousel_pager jcarousel-skin-' . $vars['settings']['views_slideshow_jcarousel_pager_skin'];
-  $vars['attributes_array']['id'] = 'widget_pager_' . $vars['location'] . '_' . $vars['vss_id'];
-
   // Render all the fields unless there is only 1 slide and the user specified
   // to hide them when there is only one slide.
   $vars['rendered_field_items'] = '';
   if (empty($vars['settings']['hide_on_single_slide']) || count($vars['view']->result) > 1) {
+    // Build our javascript settings.
+    $js_vars = array(
+      'viewsSlideshowJCarouselPager' => array(
+        $vars['vss_id'] => array(
+          $vars['location'] => array(
+            'carouselObj' => '',
+            'moveOnChange' => $vars['settings']['views_slideshow_jcarousel_pager_move_on_change'],
+  					'updateOnPrevNext' => $vars['settings']['views_slideshow_jcarousel_pager_update_on_prev_next'],
+            'orientation' => $vars['settings']['views_slideshow_jcarousel_pager_orientation'],
+            'scroll' => $vars['settings']['views_slideshow_jcarousel_pager_scroll'],
+            'visible' => $vars['settings']['views_slideshow_jcarousel_pager_visible'],
+            'wrap' => $vars['settings']['views_slideshow_jcarousel_pager_wrap'],
+            'animation' => $vars['settings']['views_slideshow_jcarousel_pager_animation'],
+          ),
+        ),
+      ),
+    );
+
+    // Add the settings to the page.
+    drupal_add_js($js_vars, array('type' => 'setting', 'scope' => JS_DEFAULT));
+
+    // Add our class to the wrapper.
+    $vars['attributes_array']['class'][] = 'views_slideshow_jcarousel_pager';
+    $vars['attributes_array']['class'][] = 'jcarousel-skin-' . $vars['settings']['views_slideshow_jcarousel_pager_skin'];
+    $vars['attributes_array']['id'] = 'widget_pager_' . $vars['location'] . '_' . $vars['vss_id'];
+
     foreach ($vars['view']->result as $count => $node) {
       $rendered_fields = '';
       foreach ($vars['settings']['views_slideshow_jcarousel_pager_fields'] as $field => $use) {
@@ -76,6 +78,6 @@ function _views_slideshow_jcarousel_preprocess_pager_item(&$vars) {
   }
   $classes[] = ($vars['count'] % 2) ? 'views-row-even' : 'views-row-odd';
 
-  $vars['attributes_array']['class'] = implode(' ', $classes);
+  $vars['attributes_array']['class'] = $classes;
   $vars['attributes_array']['id'] = 'views_slideshow_jcarousel_pager_item_' . $vars['location'] . '_' . $vars['vss_id'] . '_' . $vars['count'];
 }

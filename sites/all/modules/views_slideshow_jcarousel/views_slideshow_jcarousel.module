@@ -87,8 +87,9 @@ function views_slideshow_jcarousel_views_slideshow_option_definition() {
   $locations = array('top', 'bottom');
   // Defaults for the pager widget.
   foreach ($locations as $location) {
-    $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager'] = array('default' => array());
+    $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager_fields'] = array('default' => array());
     $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager_move_on_change'] = array('default' => 0);
+    $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager_update_on_prev_next'] = array('default' => 0);
     $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager_skin'] = array('default' => 'tango');
     $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager_orientation'] = array('default' => FALSE);
     $options['widgets']['contains'][$location]['contains']['views_slideshow_pager']['contains']['views_slideshow_jcarousel_pager_scroll'] = array('default' => 3);
@@ -151,6 +152,21 @@ function views_slideshow_jcarousel_pager_views_slideshow_widget_pager_form_optio
     ),
   );
 
+	$form['views_slideshow_jcarousel_pager_update_on_prev_next'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Make Previous/Next Buttons Update the Current Slide'),
+		'#default_value' => $defaults['views_slideshow_jcarousel_pager_update_on_prev_next'],
+		'#description' => t('Cycle the slideshow forward or backwards when the pager previous/next buttons are clicked'),
+		'#prefix' => '<div id="' . $dependency . '-views-slideshow-jcarousel-pager-update-on-prev-next">',
+		'#suffix' => '</div>',
+		'#states' => array(
+			'visible' => array(
+				':input[name="' . $dependency . '[enable]"]' => array('checked' => TRUE),
+				':input[name="' . $dependency . '[type]"]' => array('value' => 'views_slideshow_jcarousel_pager'),
+			),
+		),
+	);
+
   $skin_directory = libraries_get_path('jcarousel') . '/skins';
   $skins = array();
   foreach (scandir($skin_directory) as $dir) {
@@ -199,7 +215,7 @@ function views_slideshow_jcarousel_pager_views_slideshow_widget_pager_form_optio
   // Set the number of visible items.
   $form['views_slideshow_jcarousel_pager_visible'] = array(
     '#type' => 'textfield',
-    '#title' => t('Number of Visable Pager Items'),
+    '#title' => t('Number of Visible Pager Items'),
     '#default_value' => $defaults['views_slideshow_jcarousel_pager_visible'],
     '#description' => t('Set the number of pager items that are visible at a single time.'),
     '#size' => 10,
