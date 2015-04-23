@@ -6343,6 +6343,9 @@ Blogs
   top: 40px;
   width: 200px;
 }
+.node-type-blog .region.region-content .field-name-body ul {
+  padding-left: 40px;
+}
 footer {
   padding: 20px 15px 5px;
   width: 870px;
