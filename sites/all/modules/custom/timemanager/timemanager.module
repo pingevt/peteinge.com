@@ -257,6 +257,7 @@ function timemanager_form($form, &$form_state) {
       '#prefix' => '<div id="default-day-wrapper-' . $i . '">',
       '#suffix' => '</div>',
       '#size' => 8,
+      /*
       '#ajax' => array(
         'callback' => 'calendar_default_day_js',
         'wrapper' => 'default-day-wrapper-' . $i,
@@ -264,6 +265,7 @@ function timemanager_form($form, &$form_state) {
         'effect' => 'fade',
         //'trigger_as' => array('name' => 'op'),
       ),
+      */
     );
   }
 
@@ -300,6 +302,7 @@ function timemanager_form($form, &$form_state) {
       '#prefix' => '<div id="day-wrapper-' . $current_timestamp . '">',
       '#suffix' => '</div>',
       '#size' => 8,
+      /*
       '#ajax' => array(
         'callback' => 'calendar_day_js',
         'wrapper' => 'day-wrapper-' . $current_timestamp,
@@ -307,6 +310,7 @@ function timemanager_form($form, &$form_state) {
         'effect' => 'fade',
         //'trigger_as' => array('name' => 'op'),
       ),
+      */
     );
   }
 
@@ -325,7 +329,10 @@ function _validate_hours_field($element, &$form_state, $form) {
 }
 
 function calendar_day_js($form, $form_state) {
-  return $form['days'][$form_state['triggering_element']['#timestamp']];
+  if (isset($form['days'][$form_state['triggering_element']['#timestamp']])) {
+    return $form['days'][$form_state['triggering_element']['#timestamp']];
+  }
+  return 'nothing';
 }
 
 function calendar_default_day_js($form, $form_state) {
