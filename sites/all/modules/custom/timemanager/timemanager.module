@@ -28,7 +28,64 @@ function timemanager_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
 
+  $items['api/timemanager/expected-times'] = array(
+    'title' => 'TimeManager - expected time',
+    'description' => 'provide expected times for external services',
+    'page callback' => 'timemanager_expected_time',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+  );
+
   return $items;
+}
+
+function timemanager_expected_time() {
+  $args = $_GET;
+  if (isset($args['apikey']) && $args['apikey'] == 'bobiscool') {
+
+    $start_date = isset($args['startdate'])? explode('-', $args['startdate']) : explode('-', date('Y-m-d'));
+    $end_date = isset($args['enddate'])? explode('-', $args['enddate']) : explode('-', date('Y-m-d', mktime(0, 0, 0, date('m')+1, -1, date('Y'))));
+
+    $start_date_timestamp = mktime(0, 0, 1, $start_date[1], $start_date[2], $start_date[0]);
+    $end_date_timestamp = mktime(23, 59, 59, $end_date[1], $end_date[2], $end_date[0]);
+
+    $times = array();
+
+    // First load defaults
+    $q = db_select('timemanager_times_default', 'ttd');
+    $q->fields('ttd');
+    $r = $q->execute();
+    while ($row = $r->fetchAssoc()) {
+      $times['default'][$row['day']] = $row['amount'];
+    }
+
+    // Now load specific dates
+    $q = db_select('timemanager_times', 'tt');
+    $q->fields('tt');
+    $q->condition('timestamp', $start_date_timestamp, '>=');
+    $q->condition('timestamp', $end_date_timestamp, '<=');
+    $r = $q->execute();
+    while ($row = $r->fetchAssoc()) {
+      $week = date('W', $row['timestamp']);
+
+      if (date('w', $row['timestamp']) == 0) {
+        $week++;
+      }
+      if (date('w', $row['timestamp']) == 7) {
+        $week--;
+      }
+
+      $times[$row['year'] . '-' . $week][date('w', $row['timestamp'])] = $row['amount'];
+    }
+
+    drupal_json_output($times);
+    die();
+  }
+
+
+
+  drupal_json_output(array('error' => 'invalid api key'));
+  die();
 }
 
 function timemanager_form($form, &$form_state) {
@@ -68,6 +125,7 @@ function timemanager_form($form, &$form_state) {
       $year = date('Y', $stamp);
       $month = date('m', $stamp);
       $day = date('d', $stamp);
+      $timestamp = mktime(0, 0, 1, $month, $day, $year);
 
       if ($value != '') {
 
@@ -76,6 +134,7 @@ function timemanager_form($form, &$form_state) {
           'month' => $month,
           'day' => $day,
           'amount' => $value,
+          'timestamp' => $timestamp,
         );
 
         $val = db_merge('timemanager_times')
@@ -84,9 +143,11 @@ function timemanager_form($form, &$form_state) {
             'month' => $month,
             'day' => $day,
             'amount' => $value,
+            'timestamp' => $timestamp,
           ))
           ->updateFields(array(
             'amount' => $value,
+            'timestamp' => $timestamp,
           ))
           ->key(array(
             'year' => $year,
@@ -276,6 +337,7 @@ function timemanager_form_submit($form, &$form_state) {
     $year = date('Y', $stamp);
     $month = date('m', $stamp);
     $day = date('d', $stamp);
+    $timestamp = mktime(0, 0, 1, $month, $day, $year);
 
     if ($value != '') {
 
@@ -284,6 +346,7 @@ function timemanager_form_submit($form, &$form_state) {
         'month' => $month,
         'day' => $day,
         'amount' => $value,
+        'timestamp' => $timestamp,
       );
 
       $val = db_merge('timemanager_times')
@@ -292,9 +355,11 @@ function timemanager_form_submit($form, &$form_state) {
           'month' => $month,
           'day' => $day,
           'amount' => $value,
+          'timestamp' => $timestamp,
         ))
         ->updateFields(array(
           'amount' => $value,
+          'timestamp' => $timestamp,
         ))
         ->key(array(
           'year' => $year,
@@ -376,7 +441,7 @@ function theme_form_calendar(&$vars) {
 
     $cal .= '<div class="day">';
     $cal .= '<div class="day-header">';
-    $cal .= date('d', $stamp);
+    $cal .= date('d', $stamp) . ' - ' . date('W', $stamp);
     $cal .= '</div>';
     $cal .= render($vars['days'][$stamp]);
     $cal .= '</div>';
