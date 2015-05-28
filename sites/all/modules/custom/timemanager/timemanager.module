@@ -270,7 +270,7 @@ function calendar_default_day_js($form, $form_state) {
 }
 
 function timemanager_form_submit($form, &$form_state) {
-dpm($form_state);
+
   foreach ($form_state['values']['days'] as $stamp => $value) {
 
     $year = date('Y', $stamp);
