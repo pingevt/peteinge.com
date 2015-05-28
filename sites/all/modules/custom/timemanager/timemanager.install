@@ -30,7 +30,7 @@ function timemanager_schema() {
       ),
       'amount' => array(
         'description' => 'The amount of hours to be worked on this particular day.',
-        'type' => 'int',
+        'type' => 'float',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0
@@ -58,7 +58,7 @@ function timemanager_schema() {
       ),
       'amount' => array(
         'description' => 'The amount of hours to be worked on this particular day.',
-        'type' => 'int',
+        'type' => 'float',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0
