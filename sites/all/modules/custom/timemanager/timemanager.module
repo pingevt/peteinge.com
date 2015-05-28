@@ -75,14 +75,16 @@ function timemanager_expected_time() {
         $week--;
       }
 
+      if (!isset($times[$row['year'] . '-' . $week])) {
+        $times[$row['year'] . '-' . $week] = $times['default'];
+      }
+
       $times[$row['year'] . '-' . $week][date('w', $row['timestamp'])] = $row['amount'];
     }
 
     drupal_json_output($times);
     die();
   }
-
-
 
   drupal_json_output(array('error' => 'invalid api key'));
   die();
