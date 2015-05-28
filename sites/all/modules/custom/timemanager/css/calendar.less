@@ -1,0 +1,60 @@
+#cal-wrapper,
+#default-cal-wrapper {
+  *zoom: 1;
+  margin: 20px 0;
+  &:before,
+  &:after {
+    display: table;
+    content: "";
+    // Fixes Opera/contenteditable bug:
+    // http://nicolasgallagher.com/micro-clearfix-hack/#comment-36952
+    line-height: 0;
+  }
+  &:after {
+    clear: both;
+  }
+
+
+  .row {
+    width: 100%;
+    min-height: 10px;
+    clear: both;
+
+    &.header-row {
+      .day {
+        height: 30px;
+        text-align: center;
+        padding: 5px;
+        min-height: 1px;
+      }
+    }
+
+    .day {
+      width: percentage(1/7);
+      float: left;
+      min-height: 70px;
+      border: 1px solid rgba(0, 0, 0, .05);
+      position: relative;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      //height: 70px;
+
+      .day-header {
+        text-align: right;
+        background: rgba(0, 0, 0, .2);
+        padding: 5px;
+      }
+
+      .form-item {
+        margin: 0;
+      }
+
+      input {
+        margin: 0 auto;
+        display: block;
+        text-align: center;
+      }
+    }
+  }
+}

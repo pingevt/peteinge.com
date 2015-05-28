@@ -1,0 +1,6 @@
+name = "TimeManager"
+description = "TimeManager"
+core = "7.x"
+package = LUS
+
+version = 7.x-1.0

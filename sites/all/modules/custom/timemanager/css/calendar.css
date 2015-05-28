@@ -1,0 +1,57 @@
+#cal-wrapper,
+#default-cal-wrapper {
+  *zoom: 1;
+  margin: 20px 0;
+}
+#cal-wrapper:before,
+#default-cal-wrapper:before,
+#cal-wrapper:after,
+#default-cal-wrapper:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+#cal-wrapper:after,
+#default-cal-wrapper:after {
+  clear: both;
+}
+#cal-wrapper .row,
+#default-cal-wrapper .row {
+  width: 100%;
+  min-height: 10px;
+  clear: both;
+}
+#cal-wrapper .row.header-row .day,
+#default-cal-wrapper .row.header-row .day {
+  height: 30px;
+  text-align: center;
+  padding: 5px;
+  min-height: 1px;
+}
+#cal-wrapper .row .day,
+#default-cal-wrapper .row .day {
+  width: 14.285714285714285%;
+  float: left;
+  min-height: 70px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#cal-wrapper .row .day .day-header,
+#default-cal-wrapper .row .day .day-header {
+  text-align: right;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+}
+#cal-wrapper .row .day .form-item,
+#default-cal-wrapper .row .day .form-item {
+  margin: 0;
+}
+#cal-wrapper .row .day input,
+#default-cal-wrapper .row .day input {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}

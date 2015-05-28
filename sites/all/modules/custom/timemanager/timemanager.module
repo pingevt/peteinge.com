@@ -1,0 +1,412 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function timemanager_menu() {
+  $items['admin/config/pm'] = array(
+    'title' => 'Project Management',
+    'description' => 'Settings related to project management content.',
+    'position' => 'right',
+    'weight' => -15,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+  );
+
+  $items['admin/config/pm/timemanager'] = array(
+    'title' => 'TimeManager',
+    'description' => 'Configuration for timemanager',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('timemanager_form'),
+    'access arguments' => array('access administration pages'),
+  );
+
+  $items['admin/config/pm/timemanager/set-times'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+function timemanager_form($form, &$form_state) {
+
+  $start_date = mktime(0, 0, 1, date('m'), 1, date('Y'));
+  if (isset($_GET['startdate'])) {
+    $date_ex = explode('-', $_GET['startdate']);
+    $start_date = mktime(0, 0, 1, $date_ex[1], $date_ex[2], $date_ex[0]);
+  }
+
+  if (isset($form_state['triggering_element']['#value']) && $form_state['triggering_element']['#value'] == t('Next')) {
+    drupal_goto('admin/config/pm/timemanager', array('query' => array('startdate' => date('Y-m-d', mktime(0, 0, 1, date('m', $start_date)+1, 1, date('Y', $start_date))))));
+  }
+
+  if (isset($form_state['triggering_element']['#value']) && $form_state['triggering_element']['#value'] == t('Next Yr')) {
+    drupal_goto('admin/config/pm/timemanager', array('query' => array('startdate' => date('Y-m-d', mktime(0, 0, 1, date('m', $start_date), 1, date('Y', $start_date) + 1)))));
+  }
+
+  if (isset($form_state['triggering_element']['#value']) && $form_state['triggering_element']['#value'] == t('Previous')) {
+    drupal_goto('admin/config/pm/timemanager', array('query' => array('startdate' => date('Y-m-d', mktime(0, 0, 1, date('m', $start_date)-1, 1, date('Y', $start_date))))));
+  }
+
+  if (isset($form_state['triggering_element']['#value']) && $form_state['triggering_element']['#value'] == t('Previous Yr')) {
+    drupal_goto('admin/config/pm/timemanager', array('query' => array('startdate' => date('Y-m-d', mktime(0, 0, 1, date('m', $start_date), 1, date('Y', $start_date) - 1)))));
+  }
+
+  // Save value if input field triggered ajax
+  if (isset($form_state['triggering_element']['#value']) && isset($form_state['triggering_element']['#timestamp']) && $form_state['triggering_element']['#parents'][0] == 'days') {
+    $stamp = $form_state['triggering_element']['#timestamp'];
+
+    $value = $form_state['values']['days'][$stamp];
+
+    if (!empty($form_state['triggering_element']['#value']) && (!is_numeric($form_state['triggering_element']['#value']) || $form_state['triggering_element']['#value'] < 0 || $form_state['triggering_element']['#value'] > 24) ) {
+      form_error($form_state['triggering_element'], t('Incorrect Value.'));
+    }
+    else {
+      $year = date('Y', $stamp);
+      $month = date('m', $stamp);
+      $day = date('d', $stamp);
+
+      if ($value != '') {
+
+        $record = array(
+          'year' => $year,
+          'month' => $month,
+          'day' => $day,
+          'amount' => $value,
+        );
+
+        $val = db_merge('timemanager_times')
+          ->insertFields(array(
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'amount' => $value,
+          ))
+          ->updateFields(array(
+            'amount' => $value,
+          ))
+          ->key(array(
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+          ))
+          ->execute();
+      }
+      else {
+        $num_deleted = db_delete('timemanager_times')
+          ->condition('year', $year)
+          ->condition('month', $month)
+          ->condition('day', $day)
+          ->execute();
+      }
+    }
+  }
+
+
+  if (isset($form_state['triggering_element']['#value']) && isset($form_state['triggering_element']['#day']) && $form_state['triggering_element']['#parents'][0] == 'default_days') {
+    $day = $form_state['triggering_element']['#day'];
+    $value = $form_state['values']['default_days'][$day];
+
+    if ($value != '') {
+      $record = array(
+        'day' => $day,
+        'amount' => $value,
+      );
+
+      $val = db_merge('timemanager_times_default')
+        ->insertFields(array(
+          'day' => $day,
+          'amount' => $value,
+        ))
+        ->updateFields(array(
+          'amount' => $value,
+        ))
+        ->key(array(
+          'day' => $day,
+        ))
+        ->execute();
+    }
+    else {
+      $num_deleted = db_delete('timemanager_times_default')
+        ->condition('day', $day)
+        ->execute();
+    }
+  }
+
+
+
+
+  $form = array(
+    '#tree' => TRUE,
+    '#attached' => array('css' => array(drupal_get_path('module', 'timemanager') . '/css/calendar.css')),
+  );
+
+  $form['nav']['prev_yr'] = array(
+    '#type' => 'button',
+    '#value' => t('Previous Yr'),
+    '#executes_submit_callback' => FALSE,
+  );
+
+  $form['nav']['prev'] = array(
+    '#type' => 'button',
+    '#value' => t('Previous'),
+    '#executes_submit_callback' => FALSE,
+  );
+
+  $form['nav']['next'] = array(
+    '#type' => 'button',
+    '#value' => t('Next'),
+    '#executes_submit_callback' => FALSE,
+  );
+
+  $form['nav']['next_yr'] = array(
+    '#type' => 'button',
+    '#value' => t('Next Yr'),
+    '#executes_submit_callback' => FALSE,
+  );
+
+  $form['default_days'] = array(
+    '#prefix' => '<div id="default-cal-wrapper">',
+    '#theme' => 'form_default_calendar',
+    '#suffix' => '</div>',
+  );
+
+  $results = array();
+  $result = db_select('timemanager_times_default', 'ttd')
+    ->fields('ttd')
+    ->execute();
+  while($record = $result->fetchAssoc()) {
+    $results[$record['day']] = $record;
+  }
+
+  for ($i = 0; $i <= 6; $i++) {
+    $form['default_days'][$i] = array(
+      '#title' => 'default ' . $i,
+      '#title_display' => 'none',
+      '#type' => 'textfield',
+      '#day' => $i,
+      '#maxlength' => 2,
+      '#element_validate' => array('_validate_hours_field'),
+      '#default_value' => isset($results[$i])? $results[$i]['amount'] : '',
+      '#prefix' => '<div id="default-day-wrapper-' . $i . '">',
+      '#suffix' => '</div>',
+      '#size' => 8,
+      '#ajax' => array(
+        'callback' => 'calendar_default_day_js',
+        'wrapper' => 'default-day-wrapper-' . $i,
+        'method' => 'replace',
+        'effect' => 'fade',
+        //'trigger_as' => array('name' => 'op'),
+      ),
+    );
+  }
+
+  $form['days'] = array(
+    '#prefix' => '<div id="cal-wrapper">',
+    '#theme' => 'form_calendar',
+    '#month' => date('m', $start_date),
+    '#year' => date('Y', $start_date),
+    '#suffix' => '</div>',
+  );
+
+  $results = array();
+  $result = db_select('timemanager_times', 'tt')
+    ->fields('tt')
+    ->condition('year', date('Y', $start_date))
+    ->condition('month', date('m', $start_date))
+    ->execute();
+  while($record = $result->fetchAssoc()) {
+    $ts = mktime(0, 0, 0, $record['month'], $record['day'], $record['year']);
+    $results[date('Y-m-d', $ts)] = $record;
+  }
+
+  for($i = 1; $i<= date('t', $start_date); $i++) {
+    $current_timestamp = mktime(0, 0, 0, date('m', $start_date), $i, date('Y', $start_date));
+
+    $form['days'][$current_timestamp] = array(
+      '#title' => date('Y-m-d', $current_timestamp),
+      '#title_display' => 'none',
+      '#timestamp' => $current_timestamp,
+      '#type' => 'textfield',
+      '#maxlength' => 2,
+      '#element_validate' => array('_validate_hours_field'),
+      '#default_value' => isset($results[date('Y-m-d', $current_timestamp)])? $results[date('Y-m-d', $current_timestamp)]['amount'] : '',
+      '#prefix' => '<div id="day-wrapper-' . $current_timestamp . '">',
+      '#suffix' => '</div>',
+      '#size' => 8,
+      '#ajax' => array(
+        'callback' => 'calendar_day_js',
+        'wrapper' => 'day-wrapper-' . $current_timestamp,
+        'method' => 'replace',
+        'effect' => 'fade',
+        //'trigger_as' => array('name' => 'op'),
+      ),
+    );
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'submit values',
+  );
+
+  return $form;
+}
+
+function _validate_hours_field($element, &$form_state, $form) {
+  if (!empty($element['#value']) && (!is_numeric($element['#value']) || $element['#value'] < 0 || $element['#value'] > 24) ) {
+    form_error($element, t('Incorrect Value.'));
+  }
+}
+
+function calendar_day_js($form, $form_state) {
+  return $form['days'][$form_state['triggering_element']['#timestamp']];
+}
+
+function calendar_default_day_js($form, $form_state) {
+  return $form['default_days'][$form_state['triggering_element']['#day']];
+}
+
+function timemanager_form_submit($form, &$form_state) {
+dpm($form_state);
+  foreach ($form_state['values']['days'] as $stamp => $value) {
+
+    $year = date('Y', $stamp);
+    $month = date('m', $stamp);
+    $day = date('d', $stamp);
+
+    if ($value != '') {
+
+      $record = array(
+        'year' => $year,
+        'month' => $month,
+        'day' => $day,
+        'amount' => $value,
+      );
+
+      $val = db_merge('timemanager_times')
+        ->insertFields(array(
+          'year' => $year,
+          'month' => $month,
+          'day' => $day,
+          'amount' => $value,
+        ))
+        ->updateFields(array(
+          'amount' => $value,
+        ))
+        ->key(array(
+          'year' => $year,
+          'month' => $month,
+          'day' => $day,
+        ))
+        ->execute();
+    }
+    else {
+      $num_deleted = db_delete('timemanager_times')
+        ->condition('year', $year)
+        ->condition('month', $month)
+        ->condition('day', $day)
+        ->execute();
+    }
+  }
+
+  foreach ($form_state['values']['default_days'] as $day => $value) {
+    if ($value != '') {
+      $record = array(
+        'day' => $day,
+        'amount' => $value,
+      );
+
+      $val = db_merge('timemanager_times_default')
+        ->insertFields(array(
+          'day' => $day,
+          'amount' => $value,
+        ))
+        ->updateFields(array(
+          'amount' => $value,
+        ))
+        ->key(array(
+          'day' => $day,
+        ))
+        ->execute();
+    }
+    else {
+      $num_deleted = db_delete('timemanager_times_default')
+        ->condition('day', $day)
+        ->execute();
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function timemanager_theme($existing, $type, $theme, $path) {
+  return array(
+    'form_calendar' => array(
+      'render element' => 'days',
+    ),
+    'form_default_calendar' => array(
+      'render element' => 'default_days',
+    ),
+  );
+}
+
+function theme_form_calendar(&$vars) {
+  $cal = '<div>';
+
+  $first_day = mktime(0, 0, 1, $vars['days']['#month'], 1, $vars['days']['#year']);
+
+  $cal .= '<h2>' . date('M, Y', $first_day) . '</h2>';
+  $cal .= '<div class="row header-row">';
+  $cal .= '<div class="day">Sunday</div><div class="day">Monday</div><div class="day">Tuesday</div><div class="day">Wednesday</div><div class="day">Thursday</div><div class="day">Friday</div><div class="day">Saturday</div>';
+  $cal .= '</div><div class="row">';
+
+
+  for($i = 1; $i <= date('w', $first_day); $i++) {
+    $cal .= '<div class="day day-filler day-filler-previous"></div>';
+  }
+
+  foreach(element_children($vars['days']) as $stamp) {
+    if (date('w', $stamp) == 0) {
+      $cal .= '</div><div class="row">';
+    }
+
+    $cal .= '<div class="day">';
+    $cal .= '<div class="day-header">';
+    $cal .= date('d', $stamp);
+    $cal .= '</div>';
+    $cal .= render($vars['days'][$stamp]);
+    $cal .= '</div>';
+
+  }
+
+  for($i = 6; $i > date('w', $stamp); $i--) {
+    $cal .= '<div class="day day-filler day-filler-post"></div>';
+  }
+
+
+  $cal .= '</div></div>';
+  return $cal;
+}
+
+function theme_form_default_calendar(&$vars) {
+  $cal = '<div>';
+  $cal .= '<h2>Defaults</h2>';
+  $cal .= '<div class="row header-row">';
+  $cal .= '<div class="day">Sunday</div><div class="day">Monday</div><div class="day">Tuesday</div><div class="day">Wednesday</div><div class="day">Thursday</div><div class="day">Friday</div><div class="day">Saturday</div>';
+  $cal .= '</div><div class="row">';
+
+  foreach(element_children($vars['default_days']) as $i) {
+    $cal .= '<div class="day">';
+    $cal .= render($vars['default_days'][$i]);
+    $cal .= '</div>';
+
+  }
+
+  $cal .= '</div></div>';
+  return $cal;
+}
+

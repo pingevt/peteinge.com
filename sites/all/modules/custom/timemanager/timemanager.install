@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function timemanager_schema() {
+  $schema['timemanager_times'] = array(
+    'description' => 'Manages amount sof time desired to work',
+    'fields' => array(
+      'year' => array(
+        'description' => 'The year of the date.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'month' => array(
+        'description' => 'The month of the date.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'day' => array(
+        'description' => 'The day of the date.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'amount' => array(
+        'description' => 'The amount of hours to be worked on this particular day.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+    ),
+    'indexes' => array(
+      'year' => array('year'),
+      'month' => array('month'),
+      'day' => array('day'),
+      ),
+    'unique keys' => array(
+      'month_month_day' => array('year', 'month', 'day'),
+    ),
+    'primary key' => array('year', 'month', 'day'),
+  );
+  $schema['timemanager_times_default'] = array(
+    'description' => 'Manages amount sof time desired to work',
+    'fields' => array(
+      'day' => array(
+        'description' => 'The day of the date.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'amount' => array(
+        'description' => 'The amount of hours to be worked on this particular day.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+    ),
+    'indexes' => array(
+      'day' => array('day'),
+      ),
+    'unique keys' => array(
+      'month_month_day' => array('day'),
+    ),
+  );
+  return $schema;
+}
+
+/**
+ * Add default table
+ */
+function timemanager_update_7001() {
+  $schema = timemanager_schema();
+  db_create_table('timemanager_times_default', $schema['timemanager_times_default']);
+}
+
