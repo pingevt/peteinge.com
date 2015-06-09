@@ -41,16 +41,24 @@ function timemanager_schema() {
         'not null' => TRUE,
         'default' => 0
       ),
+      'type' => array(
+        'description' => 'The type of this time amount. 0 = not billable, 1 = billable',
+        'type' => 'float',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
     ),
     'indexes' => array(
       'year' => array('year'),
       'month' => array('month'),
       'day' => array('day'),
+      'type' => array('type'),
       ),
     'unique keys' => array(
-      'month_month_day' => array('year', 'month', 'day'),
+      'year_month_day_type' => array('year', 'month', 'day', 'type'),
     ),
-    'primary key' => array('year', 'month', 'day'),
+    'primary key' => array('year', 'month', 'day', 'type'),
   );
   $schema['timemanager_times_default'] = array(
     'description' => 'Manages amount sof time desired to work',
@@ -69,12 +77,20 @@ function timemanager_schema() {
         'not null' => TRUE,
         'default' => 0
       ),
+      'type' => array(
+        'description' => 'The type of this time amount. 0 = not billable, 1 = billable',
+        'type' => 'float',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
     ),
     'indexes' => array(
       'day' => array('day'),
+      'type' => array('type'),
       ),
     'unique keys' => array(
-      'month_month_day' => array('day'),
+      'day_type' => array('day', 'type'),
     ),
   );
   return $schema;
@@ -113,5 +129,45 @@ function timemanager_update_7002() {
         ))
         ->execute();
   }
+}
+
+/**
+ * Add type columns to timemanager_times and timemanager_times_default
+ */
+function timemanager_update_7003() {
+  $schema = timemanager_schema();
+  db_add_field('timemanager_times', 'type', $schema['timemanager_times']['fields']['type']);
+  db_add_field('timemanager_times_default', 'type', $schema['timemanager_times_default']['fields']['type']);
+}
+
+/**
+ * Set type columns to 1
+ */
+function timemanager_update_7004() {
+  $update = db_update('timemanager_times')
+    ->fields(array('type' => 1))
+    ->execute();
+  $update = db_update('timemanager_times_default')
+    ->fields(array('type' => 1))
+    ->execute();
+}
+
+/**
+ * Set keys properly.
+ */
+function timemanager_update_7005() {
+  // Remove old keys.
+  db_drop_primary_key('timemanager_times');
+  db_drop_unique_key('timemanager_times', 'month_month_day');
+
+  db_drop_unique_key('timemanager_times_default', 'month_month_day');
+
+  // Add new keys.
+  db_add_index('timemanager_times', 'type', array('type'));
+  db_add_unique_key('timemanager_times', 'year_month_day_type', array('year', 'month', 'day', 'type'));
+  db_add_primary_key('timemanager_times', array('year', 'month', 'day', 'type'));
+
+  db_add_index('timemanager_times_default', 'type', array('type'));
+  db_add_unique_key('timemanager_times_default', 'day_type', array('day', 'type'));
 }
 

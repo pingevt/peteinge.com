@@ -56,7 +56,7 @@ function timemanager_expected_time() {
     $q->fields('ttd');
     $r = $q->execute();
     while ($row = $r->fetchAssoc()) {
-      $times['default'][$row['day']] = $row['amount'];
+      $times['default'][$row['day']][$row['type']] = $row['amount'];
     }
 
     // Now load specific dates
@@ -79,7 +79,7 @@ function timemanager_expected_time() {
         $times[$row['year'] . '-' . $week] = $times['default'];
       }
 
-      $times[$row['year'] . '-' . $week][date('w', $row['timestamp'])] = $row['amount'];
+      $times[$row['year'] . '-' . $week][date('w', $row['timestamp'])][$row['type']] = $row['amount'];
     }
 
     drupal_json_output($times);
@@ -240,13 +240,48 @@ function timemanager_form($form, &$form_state) {
   $results = array();
   $result = db_select('timemanager_times_default', 'ttd')
     ->fields('ttd')
+    ->condition('type', 1)
     ->execute();
   while($record = $result->fetchAssoc()) {
     $results[$record['day']] = $record;
   }
 
   for ($i = 0; $i <= 6; $i++) {
-    $form['default_days'][$i] = array(
+    $form['default_days']['billable'][$i] = array(
+      '#title' => 'default ' . $i,
+      '#title_display' => 'none',
+      '#type' => 'textfield',
+      '#day' => $i,
+      '#maxlength' => 4,
+      '#element_validate' => array('_validate_hours_field'),
+      '#default_value' => isset($results[$i])? $results[$i]['amount'] : '',
+      '#prefix' => '<div id="default-day-wrapper-' . $i . '">',
+      '#suffix' => '</div>',
+      '#size' => 8,
+      /*
+      '#ajax' => array(
+        'callback' => 'calendar_default_day_js',
+        'wrapper' => 'default-day-wrapper-' . $i,
+        'method' => 'replace',
+        'effect' => 'fade',
+        //'trigger_as' => array('name' => 'op'),
+      ),
+      */
+    );
+  }
+
+  // Not billable
+  $results = array();
+  $result = db_select('timemanager_times_default', 'ttd')
+    ->fields('ttd')
+    ->condition('type', 0)
+    ->execute();
+  while($record = $result->fetchAssoc()) {
+    $results[$record['day']] = $record;
+  }
+
+  for ($i = 0; $i <= 6; $i++) {
+    $form['default_days']['not_billable'][$i] = array(
       '#title' => 'default ' . $i,
       '#title_display' => 'none',
       '#type' => 'textfield',
@@ -277,11 +312,13 @@ function timemanager_form($form, &$form_state) {
     '#suffix' => '</div>',
   );
 
+  // Billable days hours
   $results = array();
   $result = db_select('timemanager_times', 'tt')
     ->fields('tt')
     ->condition('year', date('Y', $start_date))
     ->condition('month', date('m', $start_date))
+    ->condition('type', 1)
     ->execute();
   while($record = $result->fetchAssoc()) {
     $ts = mktime(0, 0, 0, $record['month'], $record['day'], $record['year']);
@@ -291,7 +328,46 @@ function timemanager_form($form, &$form_state) {
   for($i = 1; $i<= date('t', $start_date); $i++) {
     $current_timestamp = mktime(0, 0, 0, date('m', $start_date), $i, date('Y', $start_date));
 
-    $form['days'][$current_timestamp] = array(
+    $form['days']['billable'][$current_timestamp] = array(
+      '#title' => date('Y-m-d', $current_timestamp),
+      '#title_display' => 'none',
+      '#timestamp' => $current_timestamp,
+      '#type' => 'textfield',
+      '#maxlength' => 4,
+      '#element_validate' => array('_validate_hours_field'),
+      '#default_value' => isset($results[date('Y-m-d', $current_timestamp)])? $results[date('Y-m-d', $current_timestamp)]['amount'] : '',
+      '#prefix' => '<div id="day-wrapper-' . $current_timestamp . '">',
+      '#suffix' => '</div>',
+      '#size' => 8,
+      /*
+      '#ajax' => array(
+        'callback' => 'calendar_day_js',
+        'wrapper' => 'day-wrapper-' . $current_timestamp,
+        'method' => 'replace',
+        'effect' => 'fade',
+        //'trigger_as' => array('name' => 'op'),
+      ),
+      */
+    );
+  }
+
+  // Not-Billable days hours
+  $results = array();
+  $result = db_select('timemanager_times', 'tt')
+    ->fields('tt')
+    ->condition('year', date('Y', $start_date))
+    ->condition('month', date('m', $start_date))
+    ->condition('type', 0)
+    ->execute();
+  while($record = $result->fetchAssoc()) {
+    $ts = mktime(0, 0, 0, $record['month'], $record['day'], $record['year']);
+    $results[date('Y-m-d', $ts)] = $record;
+  }
+
+  for($i = 1; $i<= date('t', $start_date); $i++) {
+    $current_timestamp = mktime(0, 0, 0, date('m', $start_date), $i, date('Y', $start_date));
+
+    $form['days']['not_billable'][$current_timestamp] = array(
       '#title' => date('Y-m-d', $current_timestamp),
       '#title_display' => 'none',
       '#timestamp' => $current_timestamp,
@@ -341,75 +417,89 @@ function calendar_default_day_js($form, $form_state) {
 
 function timemanager_form_submit($form, &$form_state) {
 
-  foreach ($form_state['values']['days'] as $stamp => $value) {
+  foreach ($form_state['values']['days'] as $type => $days) {
+    $type_val = ($type == 'billable')? 1 : 0;
+    foreach ($days as $stamp => $value) {
 
-    $year = date('Y', $stamp);
-    $month = date('m', $stamp);
-    $day = date('d', $stamp);
-    $timestamp = mktime(0, 0, 1, $month, $day, $year);
+      $year = date('Y', $stamp);
+      $month = date('m', $stamp);
+      $day = date('d', $stamp);
+      $timestamp = mktime(0, 0, 1, $month, $day, $year);
 
-    if ($value != '') {
+      if ($value != '') {
 
-      $record = array(
-        'year' => $year,
-        'month' => $month,
-        'day' => $day,
-        'amount' => $value,
-        'timestamp' => $timestamp,
-      );
-
-      $val = db_merge('timemanager_times')
-        ->insertFields(array(
+        $record = array(
           'year' => $year,
           'month' => $month,
           'day' => $day,
           'amount' => $value,
           'timestamp' => $timestamp,
-        ))
-        ->updateFields(array(
-          'amount' => $value,
-          'timestamp' => $timestamp,
-        ))
-        ->key(array(
-          'year' => $year,
-          'month' => $month,
-          'day' => $day,
-        ))
-        ->execute();
-    }
-    else {
-      $num_deleted = db_delete('timemanager_times')
-        ->condition('year', $year)
-        ->condition('month', $month)
-        ->condition('day', $day)
-        ->execute();
+          'type' => $type_val,
+        );
+
+        $val = db_merge('timemanager_times')
+          ->insertFields(array(
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'amount' => $value,
+            'timestamp' => $timestamp,
+            'type' => $type_val,
+          ))
+          ->updateFields(array(
+            'amount' => $value,
+            'timestamp' => $timestamp,
+          ))
+          ->key(array(
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'type' => $type_val,
+          ))
+          ->execute();
+      }
+      else {
+        $num_deleted = db_delete('timemanager_times')
+          ->condition('year', $year)
+          ->condition('month', $month)
+          ->condition('day', $day)
+          ->condition('type', $type_val)
+          ->execute();
+      }
     }
   }
 
-  foreach ($form_state['values']['default_days'] as $day => $value) {
-    if ($value != '') {
-      $record = array(
-        'day' => $day,
-        'amount' => $value,
-      );
+  foreach ($form_state['values']['default_days'] as $type => $days) {
+    $type_val = ($type == 'billable')? 1 : 0;
+    foreach ($days as $day => $value) {
+      if ($value != '') {
+        $record = array(
+          'day' => $day,
+          'amount' => $value,
+          'type' => $type_val,
+        );
 
-      $val = db_merge('timemanager_times_default')
-        ->insertFields(array(
-          'day' => $day,
-          'amount' => $value,
-        ))
-        ->updateFields(array(
-          'amount' => $value,
-        ))
-        ->key(array(
-          'day' => $day,
-        ))
-        ->execute();
-    }
-    else {
-      $num_deleted = db_delete('timemanager_times_default')
-        ->condition('day', $day)
-        ->execute();
+        $val = db_merge('timemanager_times_default')
+          ->insertFields(array(
+            'day' => $day,
+            'amount' => $value,
+            'type' => $type_val,
+          ))
+          ->updateFields(array(
+            'amount' => $value,
+          ))
+          ->key(array(
+            'day' => $day,
+            'type' => $type_val,
+          ))
+          ->execute();
+      }
+      else {
+        $num_deleted = db_delete('timemanager_times_default')
+          ->condition('day', $day)
+          ->condition('type', $type_val)
+          ->execute();
+      }
     }
   }
 }
@@ -443,7 +533,7 @@ function theme_form_calendar(&$vars) {
     $cal .= '<div class="day day-filler day-filler-previous"></div>';
   }
 
-  foreach(element_children($vars['days']) as $stamp) {
+  foreach(element_children($vars['days']['billable']) as $stamp) {
     if (date('w', $stamp) == 0) {
       $cal .= '</div><div class="row">';
     }
@@ -452,7 +542,8 @@ function theme_form_calendar(&$vars) {
     $cal .= '<div class="day-header">';
     $cal .= date('d', $stamp) . ' - ' . date('W', $stamp);
     $cal .= '</div>';
-    $cal .= render($vars['days'][$stamp]);
+    $cal .= render($vars['days']['not_billable'][$stamp]);
+    $cal .= render($vars['days']['billable'][$stamp]);
     $cal .= '</div>';
 
   }
@@ -473,9 +564,10 @@ function theme_form_default_calendar(&$vars) {
   $cal .= '<div class="day">Sunday</div><div class="day">Monday</div><div class="day">Tuesday</div><div class="day">Wednesday</div><div class="day">Thursday</div><div class="day">Friday</div><div class="day">Saturday</div>';
   $cal .= '</div><div class="row">';
 
-  foreach(element_children($vars['default_days']) as $i) {
+  foreach(element_children($vars['default_days']['billable']) as $i) {
     $cal .= '<div class="day">';
-    $cal .= render($vars['default_days'][$i]);
+    $cal .= render($vars['default_days']['not_billable'][$i]);
+    $cal .= render($vars['default_days']['billable'][$i]);
     $cal .= '</div>';
 
   }
