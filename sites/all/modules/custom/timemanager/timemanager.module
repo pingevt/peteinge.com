@@ -36,7 +36,23 @@ function timemanager_menu() {
     'access callback' => TRUE,
   );
 
+
+
+  $items['submit-form'] = array(
+    'title' => 'Submit formatOutput',
+    'description' => 'Thanks for submitting form',
+    'page callback' => '_submit_form_test',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+  );
+
   return $items;
+}
+
+function _submit_form_test() {
+  dpm($_POST);
+
+  return 'Thanks for submitting form';
 }
 
 function timemanager_expected_time() {
