@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function invoicemanager_menu() {
+  $items['admin/config/pm/invoicemanager'] = array(
+    'title' => 'InvoiceManager',
+    'description' => 'Configuration for invoicemanager',
+    'page callback' => 'invoicemanager_invoice_table',
+    'access arguments' => array('access administration pages'),
+  );
+
+  $items['admin/config/pm/invoicemanager/view-invoices'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+function invoicemanager_invoice_table() {
+  $status = _invoice_status();
+
+  db_set_active('ac_database');
+  $q = db_select('acx_invoice_objects', 'i');
+  $q->fields('i');
+  $q->fields('co', array('name'));
+  $q->fields('c', array('code'));
+  $q->addExpression('ia.uid', 'attn');
+  $q->leftJoin('acx_currencies', 'c', 'c.id = i.currency_id');
+  $q->leftJoin('acx_invoice_attn', 'ia', 'ia.iid = i.id');
+  $q->leftJoin('acx_companies', 'co', 'co.id = i.company_id');
+  $q->orderBy('created_on', 'DESC');
+  $result = $q->execute();
+
+  $invoices = array();
+  while($record = $result->fetchObject()) {
+    $invoices[] = $record;
+  }
+  db_set_active();
+
+  $table = array(
+    '#theme' => 'table',
+    '#header' => array('Invoice Number', 'Company Name', 'Attn', 'Due', 'Private Comment', 'Total', 'Status', 'View'),
+    '#rows' => array(),
+    '#sticky' => FALSE,
+    '#empty' => 'There are no invoices',
+  );
+
+  foreach($invoices as $invoice) {
+
+    // Grab Line Items and total.
+    db_set_active('ac_database');
+    $q = db_select('acx_invoice_object_items', 'ii');
+    $q->fields('ii');
+    $q->condition('parent_id', $invoice->id);
+    $result = $q->execute();
+
+    $total = 0;
+    while($record = $result->fetchObject()) {
+      $total += $record->total;
+    }
+
+    //Grab Attn
+    $q = db_select('acx_invoice_attn', 'ia');
+    $q->fields('u', array('first_name', 'last_name'));
+    $q->addExpression('uc.value', 'title');
+    $q->leftJoin('acx_config_option_values', 'uc', '(uc.parent_id = ia.uid AND uc.name = :title)', array(':title' => 'title'));
+    $q->leftJoin('acx_users', 'u', 'u.id = ia.uid');
+    $q->condition('ia.iid', $invoice->id);
+    $result = $q->execute();
+    $record = $result->fetchAssoc();
+
+    if(sizeof($record) > 1) {
+      $username = $record['first_name'] .' '. $record['last_name'];
+    }
+    else {
+      $username = '<a class="add-att" data-inv-id="'. $invoice->id .'">Add Attn</a>';
+    }
+
+    db_set_active();
+
+    $table['#rows'][] = array(
+      'data' => array(
+        $invoice->varchar_field_1,
+        $invoice->company_name,
+        $username,
+        $invoice->date_field_2,
+        $invoice->private_note,
+        '$' . number_format($total, 2),
+        $status[$invoice->status],
+        '<a href="view_invoice.php?inv_id=' . $invoice->id . '">View</a>',
+      ),
+      'id' => $invoice->id,
+    );
+  }
+
+  return $table;
+}
+
+function _invoice_status() {
+  return array(
+    '0' => 'Draft',
+    '1' => 'Issued',
+    '2' => 'Billed',
+    '3' => 'Cancelled',
+  );
+}

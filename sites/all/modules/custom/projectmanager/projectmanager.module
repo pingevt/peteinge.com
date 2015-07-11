@@ -1,0 +1,52 @@
+<?php
+
+define('AC_API_PATH', 'http://projects.peteinge.com/public/api.php');
+define('AC_API_KEY', '24-tDXkzeCfp54wD2CEgP5nOyoMIA3Kik4M9cabFfry');
+
+/**
+ * Implements hook_menu().
+ */
+function projectmanager_menu() {
+  $items['admin/config/pm'] = array(
+    'title' => 'Project Management',
+    'description' => 'Settings related to project management content.',
+    'position' => 'right',
+    'weight' => -15,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_init().
+ */
+function projectmanager_init() {
+  $settings = projectmanager_settings();
+
+  $ac_database = array(
+    'database' => $settings['db_database'],
+    'username' => $settings['db_user'],
+    'password' => $settings['db_password'],
+    'host' => $settings['db_host'],
+    'driver' => 'mysql',
+  );
+
+  Database::addConnectionInfo('ac_database', 'default', $ac_database);
+}
+
+function projectmanager_settings() {
+  $settings = array();
+
+  $settings['db_host'] = 'www.peteinge.com';
+  $settings['db_user'] = 'invoice';
+  $settings['db_password'] = 'peteisgreat';
+  $settings['db_database'] = 'projects';
+
+  $settings['biblesearch_api_key'] = 'cOG9W6hNfpTAzkPiMEKQER86CF03EUohiug5rDJM';
+
+  return $settings;
+}

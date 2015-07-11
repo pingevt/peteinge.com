@@ -4,16 +4,6 @@
  * Implements hook_menu().
  */
 function timemanager_menu() {
-  $items['admin/config/pm'] = array(
-    'title' => 'Project Management',
-    'description' => 'Settings related to project management content.',
-    'position' => 'right',
-    'weight' => -15,
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file path' => drupal_get_path('module', 'system'),
-    'file' => 'system.admin.inc',
-  );
 
   $items['admin/config/pm/timemanager'] = array(
     'title' => 'TimeManager',

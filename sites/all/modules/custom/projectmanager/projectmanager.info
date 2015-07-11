@@ -1,0 +1,6 @@
+name = "ProjectManager"
+description = "ProjectManager"
+core = "7.x"
+package = LUS
+
+version = 7.x-1.0

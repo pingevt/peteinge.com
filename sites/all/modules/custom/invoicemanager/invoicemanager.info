@@ -1,5 +1,5 @@
-name = "TimeManager"
-description = "TimeManager"
+name = "InvoiceManager"
+description = "InvoiceManager"
 core = "7.x"
 package = LUS
 
