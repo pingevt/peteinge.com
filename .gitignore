@@ -6,3 +6,11 @@ sites/*/files
 sites/*/files/*
 sites/*/private
 sites/*/private/*
+
+.DS_Store
+*/.DS_Store
+/sites/default/.DS_Store
+/sites/all/themes/peteinge/.DS_Store
+/sites/all/themes/.DS_Store
+/sites/all/modules/.DS_Store
+/includes/database/.DS_Store
